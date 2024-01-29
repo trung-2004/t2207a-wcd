@@ -16,6 +16,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <junit.version>5.9.1</junit.version>
         <mysql.version>8.0.29</mysql.version>
+        <hibernate.version>5.5.3.Final</hibernate.version>
     </properties>
 
     <dependencies>
@@ -43,6 +44,18 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.29</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+
 
     </dependencies>
 

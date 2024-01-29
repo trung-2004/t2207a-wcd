@@ -2,6 +2,7 @@ package com.dao;
 
 import com.entities.Student;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,18 @@ public class StudentDAO implements DAOInterface<Student> {
 
     @Override
     public boolean create(Student student) {
+        String sql = "INSERT INTO students (name, email, address) VALUES (?,?,?)";
+        try{
+            Database db = Database.getInstance();
+            PreparedStatement preparedStatement = db.getPreparedStatement(sql);
+            preparedStatement.setString(1, student.name);
+            preparedStatement.setString(2, student.email);
+            preparedStatement.setString(3, student.address);
+            preparedStatement.execute();
+            return true;
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
         return false;
     }
 
