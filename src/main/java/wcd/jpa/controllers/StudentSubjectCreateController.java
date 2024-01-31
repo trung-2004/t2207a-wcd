@@ -8,18 +8,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.query.Query;
 import wcd.jpa.entities.Classes;
 import wcd.jpa.entities.Student;
 import wcd.jpa.entities.Subject;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@WebServlet("/create-students")
-public class StudentCreateController extends HttpServlet {
+@WebServlet("/create-student-subject")
+public class StudentSubjectCreateController extends HttpServlet {
     private SessionFactory sessionFactory;
     @Override
     public void init() throws ServletException {
@@ -34,41 +31,46 @@ public class StudentCreateController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
-            List<Classes> list = session.createQuery("FROM Classes", Classes.class)
+            List<Student> listStudent = session.createQuery("FROM Student ", Student.class)
                     .getResultList();
             List<Subject> listSubject = session.createQuery("FROM Subject ", Subject.class)
                     .getResultList();
             session.getTransaction().commit();
-            req.setAttribute("classes",list);
-            req.setAttribute("subjects",listSubject);
+            req.setAttribute("students", listStudent);
+            req.setAttribute("subjects", listSubject);
         }
-        req.getRequestDispatcher("student/create.jsp").forward(req,resp);
+        req.getRequestDispatcher("studentsubject/create.jsp").forward(req,resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Student student = new Student();
-        student.setName(req.getParameter("name"));
-        student.setEmail(req.getParameter("email"));
-        student.setAddress(req.getParameter("address"));
-        String classId = req.getParameter("class_id");
+
+        String student_id = req.getParameter("student_id");
+        String subject_id = req.getParameter("subject_id");
         try(Session session = sessionFactory.openSession()) {
             session.beginTransaction();
-            Classes aClass = session.get(Classes.class, Integer.parseInt(classId));
-            if (aClass == null) {
+            Student student = session.get(Student.class, Integer.parseInt(student_id));
+            Subject subject = session.get(Subject.class, Integer.parseInt(subject_id));
+
+            if (student == null || subject == null) {
                 return;
             }
-            student.setClasses(aClass);
 
-            // find subjects
-            List<Integer> s_ids = Arrays.stream(req.getParameterValues("subject_id[]"))
-                    .map(Integer::parseInt).collect(Collectors.toList());
-            Query<Subject> query = session.createQuery("FROM Subject WHERE id IN (:ids)", Subject.class);
-            query.setParameter("ids", s_ids);
-            List<Subject> subjects = query.getResultList();
-            student.setSubjects(subjects);
+            if (student.getSubjects().contains(subject)) {
+                // Nếu đã thêm rồi, không làm gì cả
+                return;
+            }
+            if (subject.getStudents().contains(student)) {
+                // Nếu đã thêm rồi, không làm gì cả
+                return;
+            }
+
+            student.getSubjects().add(subject);
+            subject.getStudents().add(student);
 
             session.save(student);
+            session.save(subject);
+
             session.getTransaction().commit();
         }
 

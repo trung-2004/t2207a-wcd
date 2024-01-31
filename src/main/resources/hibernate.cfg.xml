@@ -18,5 +18,6 @@
 
         <mapping class="wcd.jpa.entities.Student" />
         <mapping class="wcd.jpa.entities.Classes" />
+        <mapping class="wcd.jpa.entities.Subject" />
     </session-factory>
 </hibernate-configuration>

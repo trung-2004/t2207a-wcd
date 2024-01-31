@@ -8,9 +8,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import wcd.jpa.entities.Classes;
 import wcd.jpa.entities.Student;
 
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet(value = "/edit-student")
 public class StudentEditController extends HttpServlet {
@@ -30,9 +32,12 @@ public class StudentEditController extends HttpServlet {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             Student student = session.get(Student.class, Integer.parseInt(entityId));
+            List<Classes> list = session.createQuery("FROM Classes", Classes.class)
+                    .getResultList();
             session.getTransaction().commit();
             if (student != null){
                 req.setAttribute("student", student);
+                req.setAttribute("classes",list);
                 req.getRequestDispatcher("student/edit.jsp").forward(req,resp);
             } else {
                 resp.setStatus(404);
@@ -53,6 +58,12 @@ public class StudentEditController extends HttpServlet {
                 student.setName(req.getParameter("name"));
                 student.setEmail(req.getParameter("email"));
                 student.setAddress(req.getParameter("address"));
+                String classId = req.getParameter("class_id");
+                Classes aClass = session.get(Classes.class, Integer.parseInt(classId));
+                if (aClass == null) {
+                    return;
+                }
+                student.setClasses(aClass);
                 session.update(student);
             }
             session.getTransaction().commit();

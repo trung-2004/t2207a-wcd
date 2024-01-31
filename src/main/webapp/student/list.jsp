@@ -1,5 +1,6 @@
 <%@ page import="java.util.List" %>
-<%@ page import="wcd.jpa.entities.Student" %><%--
+<%@ page import="wcd.jpa.entities.Student" %>
+<%@ page import="wcd.jpa.entities.Subject" %><%--
   Created by IntelliJ IDEA.
   User: DELL
   Date: 1/22/2024
@@ -25,6 +26,7 @@
             <th scope="col">Email</th>
             <th scope="col">Address</th>
             <th scope="col">Class</th>
+            <th scope="col">Subjetc</th>
             <th scope="col">Action</th>
         </tr>
         </thead>
@@ -36,8 +38,16 @@
                 <td><%= s.email %></td>
                 <td><%= s.address %></td>
                 <td><%= s.getClasses().getName() %></td>
+                <td>
+                    <ul>
+                        <% for (Subject j: s.getSubjects()){ %>
+                        <li><%= j.getName() %></li>
+                        <% }%>
+                    </ul>
+                </td>
                 <td><a href="edit-student?id=<%= s.getId() %>">Edit</a></td>
                 <td><a class="text-danger" onclick="deleteStudent(<%= s.getId() %>)" href="javascript:void(0);">Delete</a></td>
+                <td><a class="text-info" onclick="likeStudent(<%= s.getId() %>)" href="javascript:void(0);">Like</a></td>
             </tr>
         <% } %>
 
@@ -59,7 +69,20 @@
             })
         }
     }
-
+    function likeStudent(id) {
+        if (confirm("Are you sure?")){
+            var url = `list-student?id=`+id;
+            fetch(url,{
+                method: 'POST'
+                // body: formData
+            }).then(rs=>{
+                if(confirm("Reload page?"))
+                    window.location.reload();
+            }).error(err=>{
+                alert(err)
+            })
+        }
+    }
 </script>
 </body>
 </html>

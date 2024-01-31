@@ -1,4 +1,6 @@
-<%@ page import="wcd.jpa.entities.Student" %><%--
+<%@ page import="wcd.jpa.entities.Student" %>
+<%@ page import="wcd.jpa.entities.Classes" %>
+<%@ page import="java.util.List" %><%--
   Created by IntelliJ IDEA.
   User: DELL
   Date: 1/26/2024
@@ -28,6 +30,17 @@
         <div class="mb-3">
             <label for="exampleInputPassword3" class="form-label">Address</label>
             <input type="text" value="<%= student.getAddress() %>" name="address" class="form-control" id="exampleInputPassword3">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputPassword4" class="form-label">Class</label>
+            <select name="class_id" class="form-select" id="exampleInputPassword4" aria-label="Default select example">
+                <option selected>Open this select menu</option>
+                <% for (Classes s: (List<Classes>) request.getAttribute("classes")) { %>
+                <option <%= student.getClasses().getId() == s.getId() ? "selected" : "" %> value="<%= s.getId() %>">
+                    <%= s.getName() %>
+                </option>
+                <% } %>
+            </select>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>

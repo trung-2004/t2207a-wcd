@@ -1,6 +1,7 @@
 package wcd.jpa.entities;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "students")
@@ -23,6 +24,24 @@ public class Student {
     // FetchType.LAZY : đến đâu lấy đến đấy
     // FetchType.EAGER : lấy hết
     private Classes classes;
+
+    public List<Subject> getSubjects() {
+        return subjects;
+    }
+
+    public Student setSubjects(List<Subject> subjects) {
+        this.subjects = subjects;
+        return this;
+    }
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "student_subject",// bảng trung gian
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "subject_id")
+    )
+
+    private List<Subject> subjects;
 
     public Classes getClasses() {
         return classes;
