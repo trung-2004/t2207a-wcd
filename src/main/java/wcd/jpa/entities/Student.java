@@ -17,6 +17,9 @@ public class Student {
     public String email;
 
     @Column(nullable = true)
+    public String password;
+
+    @Column(nullable = true)
     public String address;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -49,6 +52,15 @@ public class Student {
 
     public Student setClasses(Classes classes) {
         this.classes = classes;
+        return this;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public Student setPassword(String password) {
+        this.password = password;
         return this;
     }
 
